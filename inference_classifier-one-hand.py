@@ -48,6 +48,7 @@ labels_dict = {
     's': 's',
     't': 't',
     'u': 'u',
+    'v': 'v',
     'w': 'w',
     'x': 'x',
     'y': 'y',
@@ -56,6 +57,7 @@ labels_dict = {
 }
 
 lastPredictedCharacter = ''
+contador = 0
 
 while True:
     data_aux = []
@@ -104,8 +106,16 @@ while True:
 
             predicted_character = labels_dict[prediction[0]]
 
-            if (predicted_character != lastPredictedCharacter):
+            if contador >= 600:
                 print(predicted_character)
+                contador = 0
+
+            elif (predicted_character != lastPredictedCharacter):
+                contador = 0
+            else:
+                contador += 20
+                cv2.rectangle(frame, (0, 40), (contador, 40), (124,252,0), 30)
+
 
             lastPredictedCharacter = predicted_character
 
