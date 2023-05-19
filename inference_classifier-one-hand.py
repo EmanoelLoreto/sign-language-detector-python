@@ -55,7 +55,7 @@ labels_dict = {
     'y': 'y',
     'z': 'z',
     'hello': 'Hello',
-    'space': 'Espaço',
+    'space': 'Espaco',
 }
 
 label_var = None
