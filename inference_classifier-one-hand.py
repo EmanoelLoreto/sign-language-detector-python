@@ -1,10 +1,8 @@
 import pickle
-
 import cv2
 import mediapipe as mp
 import numpy as np
 import time
-
 import tkinter as tk
 import threading
 
@@ -57,11 +55,16 @@ labels_dict = {
     'y': 'y',
     'z': 'z',
     'hello': 'Hello',
+    'space': 'Espaço',
 }
+
+label_var = None
 
 def inference_classifier():
     lastPredictedCharacter = ''
+    words = ''
     contador = 0
+    global label_var
     
     while True:
         data_aux = []
@@ -105,23 +108,25 @@ def inference_classifier():
             x2 = int(max(x_) * W) - 10
             y2 = int(max(y_) * H) - 10
 
-            if (len(data_aux) == 42):
+            if len(data_aux) == 42:
                 prediction = model.predict([np.asarray(data_aux)])
 
                 predicted_character = labels_dict[prediction[0]]
 
                 if contador >= 600:
-                    print(predicted_character)
-                    # Update the label text in the tkinter window
-                    # label_var.set("CV2 processing completed")
-                    contador = 0
+                    if predicted_character == 'Espaço':
+                        words = words + ' '
+                    else:
+                        words = words + lastPredictedCharacter
 
-                elif (predicted_character != lastPredictedCharacter):
+                    # Update the label text in the tkinter window
+                    label_var.set(words)
+                    contador = 0
+                elif predicted_character != lastPredictedCharacter:
                     contador = 0
                 else:
-                    contador += 20
-                    cv2.rectangle(frame, (0, 40), (contador, 40), (124,252,0), 30)
-
+                    contador += 30
+                    cv2.rectangle(frame, (0, 40), (contador, 40), (124, 252, 0), 30)
 
                 lastPredictedCharacter = predicted_character
 
@@ -132,6 +137,8 @@ def inference_classifier():
         cv2.waitKey(1)
 
 def display_tkinter():
+    global label_var
+    
     # Create a new window
     window = tk.Tk()
 
@@ -146,17 +153,16 @@ def display_tkinter():
     label_var.set("Waiting for CV2 processing...")
 
     # Create a label widget to display the text
-    label = tk.Label(window, textvariable=label_var)
-    label.pack()
+    label = tk.Label(window, textvariable=label_var, font=("Arial", 25), anchor='w')
+    label.pack(fill='both')
 
     # Run the tkinter event loop
     window.mainloop()
 
-    # Run the tkinter event loop
-    window.mainloop()
 
 # Create and start the threads for inference_classifier cv2 and tkinter windows
-cv2_thread = threading.Thread(target=inference_classifier)
 tkinter_thread = threading.Thread(target=display_tkinter)
-cv2_thread.start()
 tkinter_thread.start()
+
+cv2_thread = threading.Thread(target=inference_classifier)
+cv2_thread.start()
