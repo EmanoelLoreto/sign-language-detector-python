@@ -58,13 +58,13 @@ labels_dict = {
     'space': 'Espaco',
 }
 
-label_var = None
+# label_var = None
 
 def inference_classifier():
     lastPredictedCharacter = ''
     words = ''
     contador = 0
-    global label_var
+    # global label_var
     
     while True:
         data_aux = []
@@ -114,7 +114,7 @@ def inference_classifier():
                 predicted_character = labels_dict[prediction[0]]
 
                 if contador >= 600:
-                    if predicted_character == 'Espaço':
+                    if predicted_character == 'Espaco':
                         words = words + ' '
                     else:
                         words = words + lastPredictedCharacter
@@ -125,7 +125,7 @@ def inference_classifier():
                 elif predicted_character != lastPredictedCharacter:
                     contador = 0
                 else:
-                    contador += 30
+                    contador += 35
                     cv2.rectangle(frame, (0, 40), (contador, 40), (124, 252, 0), 30)
 
                 lastPredictedCharacter = predicted_character
